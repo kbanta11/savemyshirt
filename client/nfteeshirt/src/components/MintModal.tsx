@@ -64,7 +64,6 @@ const MintModal = () => {
         }
         //upload image to IPFS and get link
         const result = await ipfs.add(mintData.image, {pin: true});
-        console.log(`Image IPFS link: ${JSON.stringify(result)}`)
         //upload metadata with image link to IPFS (lookup current minting token id)
         const metadata = {
             'name': mintData.title ?? 'SaveMyShirt #',
@@ -142,7 +141,6 @@ const MintModal = () => {
                         })
                         .then(result => {
                             const concepts = result['outputs'][0]['data']['concepts'];
-                            console.log(concepts)
                             if(concepts[0].value >= 0.75) {
                                 setMintData({...mintData, type: concepts[0].name, image: file})
                             } else {

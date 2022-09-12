@@ -18,7 +18,6 @@ const Home = () => {
     const { activateBrowserWallet, account, activate, chainId, switchNetwork } = useEthers();
 
     const activateProvider = async () => {
-        console.log(`#### INFURA ID: ${process.env.REACT_APP_INFURA_ID}`)
         const providerOptions = {
           injected: {
             display: {
@@ -41,7 +40,6 @@ const Home = () => {
         })
         try {
           const provider = await web3Modal.connect()
-          console.log(`Provider: ${provider}`)
           await activate(provider)
           //TO-DO: Handle Errors
         } catch (error: any) {
