@@ -1,0 +1,76 @@
+{
+  "name": "nfteeshirt",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@chakra-ui/react": "^2.2.6",
+    "@craco/craco": "^7.0.0-alpha.7",
+    "@fontsource/indie-flower": "^4.5.9",
+    "@fontsource/permanent-marker": "^4.5.6",
+    "@openzeppelin/contracts": "^4.7.3",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.11.47",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "@usedapp/core": "^1.1.5",
+    "@walletconnect/web3-provider": "^1.8.0",
+    "assert": "^2.0.0",
+    "clarifai": "^2.9.1",
+    "clarifai-web-grpc": "^4.2.0",
+    "crypto-browserify": "^3.12.0",
+    "dotenv": "^16.0.1",
+    "ethers": "^5.7.0",
+    "fs": "^0.0.1-security",
+    "https-browserify": "^1.0.0",
+    "ipfs-http-client": "^58.0.0",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.2",
+    "react-icons": "^4.4.0",
+    "react-router-dom": "^6.3.0",
+    "react-router-hash-link": "^2.4.3",
+    "react-scripts": "5.0.1",
+    "react-spinners": "^0.13.4",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "typescript": "^4.7.4",
+    "url": "^0.11.0",
+    "util": "^0.12.4",
+    "web-vitals": "^2.1.4",
+    "web3": "^1.7.5",
+    "web3modal": "^1.9.9"
+  },
+  "scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "craco eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-etherscan": "^3.1.0",
+    "@types/react-router-hash-link": "^2.4.5"
+  }
+}
