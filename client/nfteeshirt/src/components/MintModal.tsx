@@ -3,13 +3,15 @@ import { useEthers, useContractFunction } from "@usedapp/core";
 import NFTShirt from '../artifacts/contracts/NFTShirt.sol/NFTShirt.json';
 import { Contract, utils } from "ethers";
 import { useDropzone } from "react-dropzone";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { create, CID, IPFSHTTPClient } from 'ipfs-http-client';
-import { ImInfo } from 'react-icons/im';
+import { ImInfo, ImPlus } from 'react-icons/im';
 import PacmanLoader from 'react-spinners/PacmanLoader'
+import { AddResult } from "ipfs-core-types/dist/src/root";
 
 export interface IMintData {
     image: File,
+    backImage: File,
     type: string,
     title: string,
     amount: number,
@@ -27,6 +29,13 @@ const MintModal = () => {
     const mintContract = new Contract('0x45A7F54fF6DDcD52c1B5954b7e1143D1134CcdCb', NFTShirt.abi);
     const { state, send } = useContractFunction(mintContract, 'mint');
     const { status } = state
+
+    const optionalImageRef = useRef<HTMLInputElement>(null);
+    const optionalImageButtonClick = () => {
+        if(optionalImageRef.current) {
+            optionalImageRef.current.click();
+        }
+    }
 
     const verifyData = () => {
         if(!mintData.image) {
@@ -63,12 +72,18 @@ const MintModal = () => {
             return;
         }
         //upload image to IPFS and get link
-        const result = await ipfs.add(mintData.image, {pin: true});
+        const imageResult = await ipfs.add(mintData.image, {pin: true});
+        //Upload backside image if it exists and get link
+        let backImageResult: AddResult | undefined;
+        if(mintData.backImage) {
+            backImageResult = await ipfs.add(mintData.backImage, {pin: true});
+        }
         //upload metadata with image link to IPFS (lookup current minting token id)
-        const metadata = {
+        var metadata = {
             'name': mintData.title ?? 'SaveMyShirt #',
             'description': 'Saving worn-out memories on the blockchain',
-            'image': 'ipfs://' + result.path,
+            'image': 'ipfs://' + imageResult.path,
+            'backImage': null as (String | null),
             'attributes': [
                 {
                     'trait_type': 'Donor',
@@ -79,6 +94,9 @@ const MintModal = () => {
                     'value': mintData.amount
                 }
             ]
+        }
+        if(backImageResult) {
+            metadata['backImage'] = 'ipfs://' + backImageResult.path;
         }
         //upload metadata to ipfs
         const metaResult = await ipfs.add(Buffer.from(JSON.stringify(metadata)), {pin: true});
@@ -96,6 +114,46 @@ const MintModal = () => {
             reader.onerror = error => reject(error);
         })
     }
+
+    const getClarifaiType = async (file: File) => {
+        const clarifaiRaw = JSON.stringify({
+            "user_app_id": {
+                "user_id": process.env.REACT_APP_CLARIFAI_USER_ID,
+                "app_id": process.env.REACT_APP_CLARIFAI_APP_ID
+            },
+            "inputs": [
+                {
+                    "data": {
+                        "image": {
+                            "base64": await (await getBase64(file)).split(',').pop()
+                        }
+                    }
+                }
+            ]
+        });
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Key ' + process.env.REACT_APP_CLARIFAI_PAT
+            },
+            body: clarifaiRaw
+        };
+        const type = await fetch("https://api.clarifai.com/v2/models/apparel-recognition/outputs", requestOptions)
+            .then(response => {
+                return response.json();
+            })
+            .then(result => {
+                const concepts = result['outputs'][0]['data']['concepts'];
+                if(concepts[0].value >= 0.75) {
+                    return concepts[0].name;
+                } else {
+                    alert('This does not appear to be a clothing article. Please take another photo and try again. If this continues in error, email me kbantadevelopment@gmail.com');
+                }
+            })
+            .catch(error => console.log('error: ', error));
+        return type;
+    }
     
     return (
         <Box padding={'10px'}>
@@ -112,47 +170,39 @@ const MintModal = () => {
                         return;
                     }
                     let file = event.target.files![0];
-                    const clarifaiRaw = JSON.stringify({
-                        "user_app_id": {
-                            "user_id": process.env.REACT_APP_CLARIFAI_USER_ID,
-                            "app_id": process.env.REACT_APP_CLARIFAI_APP_ID
-                        },
-                        "inputs": [
-                            {
-                                "data": {
-                                    "image": {
-                                        "base64": await (await getBase64(file)).split(',').pop()
-                                    }
-                                }
-                            }
-                        ]
-                    });
-                    const requestOptions = {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Authorization': 'Key ' + process.env.REACT_APP_CLARIFAI_PAT
-                        },
-                        body: clarifaiRaw
-                    };
-                    fetch("https://api.clarifai.com/v2/models/apparel-recognition/outputs", requestOptions)
-                        .then(response => {
-                            return response.json();
-                        })
-                        .then(result => {
-                            const concepts = result['outputs'][0]['data']['concepts'];
-                            if(concepts[0].value >= 0.75) {
-                                setMintData({...mintData, type: concepts[0].name, image: file})
-                            } else {
-                                alert('This does not appear to be a clothing article. Please take another photo and try again. If this continues in error, email me kbantadevelopment@gmail.com');
-                            }
-                        })
-                        .catch(error => console.log('error: ', error));
-                        setIsLoadingPhoto(false);
+                    const clarifaiType = await getClarifaiType(file);
+                    if(clarifaiType) {
+                        setMintData({...mintData, type: clarifaiType, image: file})
+                    }
+                    setIsLoadingPhoto(false);
                 }} />
                 {isLoadingPhoto ? <Center><PacmanLoader color={'#FE73AF'} /></Center> : <Text marginTop={'1rem'} marginBottom={'1rem'}>Drag and drop or click here to upload a photo of your shirt (or other clothes)!</Text>}
             </Box>
+            }
+            {
+                //Backside Image
+                mintData.image ? 
+                <Box>
+                    <Text marginTop={'1rem'} marginBottom={'1rem'}><span style={{fontWeight: 'bold'}}>Back Side</span> (optional)</Text>
+                    <input accept={'.jpg,.jpeg,.gif,.png'} ref={optionalImageRef} style={{display: 'none'}} type={'file'} onChange={async (event: React.ChangeEvent<HTMLInputElement>) => {
+                        if(!event.target.files) {
+                            return;
+                        }
+                        let file = event.target.files![0];
+                        const clarifaiType = await getClarifaiType(file);
+                        if(clarifaiType) {
+                            setMintData({...mintData, type: clarifaiType, backImage: file})
+                        }
+                    }} />
+                    {
+                        mintData.backImage ?
+                        <Image marginTop={'1rem'} marginBottom={'1rem'} height={'75px'} width={'75px'} src={URL.createObjectURL(mintData.backImage)}/>
+                        : <IconButton icon={<ImPlus />} onClick={optionalImageButtonClick} aria-label={""}/>
+                    }
+                </Box>
+                : <br />
             }  
+            
             <Flex marginTop={'1rem'} alignItems={'center'} gap={2}>
                 <Text fontWeight={'bold'}>Type</Text>
                 <Popover>
