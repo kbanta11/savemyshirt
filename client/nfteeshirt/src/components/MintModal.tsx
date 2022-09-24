@@ -17,7 +17,8 @@ export interface IMintData {
     amount: number,
 }
 
-const MintModal = (closeFunction: any) => {
+const MintModal = (props: { closeFunction: any; }) => {
+    const { closeFunction } = props;
     const { account } = useEthers();
     const {acceptedFiles, getRootProps, getInputProps} = useDropzone({accept: {
         'image/*': ['.jpeg', '.png', '.gif']
