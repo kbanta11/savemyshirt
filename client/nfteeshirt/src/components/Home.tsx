@@ -82,8 +82,8 @@ const Home = () => {
                             borderRadius={'15px'}
                             onClick={async () => {
                                 if(account) {
-                                  if(chainId !== Mumbai.chainId) {
-                                    await switchNetwork(Mumbai.chainId);
+                                  if(chainId !== Polygon.chainId) {
+                                    await switchNetwork(Polygon.chainId);
                                   } else {
                                     mintModalOnOpen();
                                   }

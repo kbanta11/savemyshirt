@@ -26,7 +26,7 @@ const MintModal = () => {
     const [isLoadingPhoto, setIsLoadingPhoto] = useState(false);
     const [isLoadingButton, setIsLoadingButton] = useState(false);
     const [mintData, setMintData] = useState({amount: 0} as IMintData);
-    const mintContract = new Contract('0x45A7F54fF6DDcD52c1B5954b7e1143D1134CcdCb', NFTShirt.abi);
+    const mintContract = new Contract('0x63ceD32A44728493Cfa3e9604D17C35e8b8573A1', NFTShirt.abi);
     const { state, send } = useContractFunction(mintContract, 'mint');
     const { status } = state
 
