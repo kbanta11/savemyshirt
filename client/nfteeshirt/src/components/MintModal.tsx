@@ -158,6 +158,7 @@ const MintModal = () => {
     return (
         <Box padding={'10px'}>
             <Heading>Save Your Shirt!</Heading>
+            <Text>Contract: <a target={'_blank'} href="https://polygonscan.com/address/0x63ced32a44728493cfa3e9604d17c35e8b8573a1" style={{color: 'blue', textDecoration: 'underline'}}>0x63ceD32A44728493Cfa3e9604D17C35e8b8573A1</a></Text>
             <Text fontWeight={'bold'} marginTop={'1rem'}>Mint To</Text>
             <Text>{account}</Text>
             {

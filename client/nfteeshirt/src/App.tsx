@@ -6,9 +6,9 @@ import { Box, Center, ChakraProvider, Image } from '@chakra-ui/react';
 import { DAppProvider, ChainId, Polygon, Mumbai } from '@usedapp/core';
 
 const config = {
-  readOnlyChainId: Mumbai.chainId,
+  readOnlyChainId: Polygon.chainId,
   readOnlyUrls: {
-    [Mumbai.chainId]: process.env.REACT_APP_MUMBAI_INFURA_URL ?? '',
+    [Polygon.chainId]: process.env.REACT_APP_POLYGON_INFURA_URL ?? '',
   },
 }
 

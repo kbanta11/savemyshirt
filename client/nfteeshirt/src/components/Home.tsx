@@ -82,6 +82,7 @@ const Home = () => {
                             borderRadius={'15px'}
                             onClick={async () => {
                                 if(account) {
+                                  console.log(`switching network: ${chainId} | Mumbai Chain Id: ${Polygon.chainId}`);
                                   if(chainId !== Polygon.chainId) {
                                     await switchNetwork(Polygon.chainId);
                                   } else {
@@ -110,6 +111,7 @@ const Home = () => {
                 <Text>Save My Shirt allows you to save pictures of your favorite clothing items you no longer wear as an NFT on the blockchain. It uses the Polygon blockchain for low-fee minting (creating them is free, apart from the gas fee). Once created, the NFT representing your shirt (or other item) will be available in your wallet. It's pretty much that simple. Oh yeah, and I know the clothing industry is kinda crazy wasteful and harsh for workers, so if you'd like, you can donate 1 (or more) MATIC when you Save Your Shirt that will be donated periodically to charities, particularly focused on the environment or issues in the apparel industry. Since there are few charities accepting native MATIC tokens, I will wait until enough is stockpiled to convert (or also thinking of creating a protocol for charities to easily accept multi-chain donations).</Text>
                 <Heading fontFamily={'Permanent Marker'} marginTop={'1rem'} marginBottom={'1rem'}>What do I do with the clothes after?</Heading>
                 <Text>DONATE THEM! Now that you're done using these items, and you're memories are saved forever on-chain, it's time to let someone else to take over the story! Please don't waste good clothes. Take your clothes to your local Goodwill, Salvation Army or any other donation drop/non-profit that takes clothing.</Text>
+                <Text marginTop={'1rem'}>Contract Address: <a target={'_blank'} href="https://polygonscan.com/address/0x63ced32a44728493cfa3e9604d17c35e8b8573a1" style={{color: 'blue', textDecoration: 'underline'}}>0x63ceD32A44728493Cfa3e9604D17C35e8b8573A1</a></Text>
             </Box>
         </Box>
     );
