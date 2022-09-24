@@ -17,7 +17,7 @@ export interface IMintData {
     amount: number,
 }
 
-const MintModal = () => {
+const MintModal = (closeFunction: any) => {
     const { account } = useEthers();
     const {acceptedFiles, getRootProps, getInputProps} = useDropzone({accept: {
         'image/*': ['.jpeg', '.png', '.gif']
@@ -104,6 +104,9 @@ const MintModal = () => {
         //get signature for transaction from connected wallet to call mint function on contract
         await send(metaUrl, { value: utils.parseEther(mintData.amount.toString() ?? '0')})
         setIsLoadingButton(false);
+        if(closeFunction) {
+            closeFunction();
+        }
     }
 
     const getBase64 = (file:File):Promise<string> => {

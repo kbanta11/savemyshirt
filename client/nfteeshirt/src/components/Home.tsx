@@ -98,7 +98,7 @@ const Home = () => {
                         <Modal isOpen={mintModalIsOpen} onClose={mintModalOnClose}>
                             <ModalOverlay />
                             <ModalContent>
-                                <MintModal />
+                                <MintModal closeFunction={mintModalOnClose} />
                             </ModalContent>
                         </Modal>
                     </Box>
